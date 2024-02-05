@@ -60,7 +60,7 @@ class Tags(Repository):
     @collect_response
     async def delete(self, request_id: int) -> List[models.RequestTagBlock]:
         q = """
-                delete from request_tag where 
+                delete from request_tag where
                 request_id = %(request_id)s
                 returning request_id, tag_id
             """

@@ -40,7 +40,6 @@ def _reload(backend, migrations):
 
 async def inserter() -> None:
     """Function for pre-insert data before running main application instance"""
-    pass
 
 
 @inject

@@ -11,7 +11,7 @@ from app.pkg.models.base import Model
 from app.pkg.models.exceptions.repository import EmptyResult
 
 
-def collect_response(
+def collect_response(  # noqa: C901
     fn=None,
     convert_to_pydantic=True,
     nullable=False,
@@ -70,7 +70,7 @@ async def __convert_response(response: RealDictRow, annotations: str):
     return await __convert_memory_viewer(r)
 
 
-async def __convert_memory_viewer(r: Union[RealDictRow, Dict]):
+async def __convert_memory_viewer(r: Union[RealDictRow, Dict]):  # noqa: C901
     """Convert memory viewer in bytes.
 
     Notes: aiopg returns memory viewer in query response,

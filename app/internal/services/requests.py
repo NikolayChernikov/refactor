@@ -148,7 +148,7 @@ class Requests:
         except Exception:
             self._logger.exception("Error to add to cent")
 
-    async def create(
+    async def create(  # noqa: C901
         self,
         cmd: models.CreateRequestCommand,
     ) -> models.Request:
@@ -191,10 +191,10 @@ class Requests:
             raise TooManyImagesError
         except Exception:
             self._filer.delete(files=assets)
-            self._logger.exception(f"Unknown error when create request to IT")
+            self._logger.exception("Unknown error when create request to IT")
             raise UnknownITRequestsError
 
-    async def read(self, id: PositiveInt) -> models.Request:
+    async def read(self, id: PositiveInt) -> models.Request:  # noqa: C901
         try:
             request = await self.__read_by_id(id=id)
         except Exception:
@@ -229,7 +229,7 @@ class Requests:
         except EmptyResult:
             return []
 
-    async def read_all(self) -> List[models.Request]:
+    async def read_all(self) -> List[models.Request]:  # noqa: C901
         try:
             requests = await self._requests_repository.read_all()
             vectors = await self._vectors_repository.read_all()
@@ -287,7 +287,7 @@ class Requests:
         if not result.vectors:
             result.vectors = []
 
-    async def update(self, cmd: models.UpdateRequestCommand) -> models.Request:
+    async def update(self, cmd: models.UpdateRequestCommand) -> models.Request:  # noqa: C901
         old_assets, new_assets = [], []
         try:
             if len(cmd.assets) > 10:
@@ -342,7 +342,7 @@ class Requests:
             raise TooManyImagesError
         except Exception:
             self._filer.delete(files=new_assets)
-            self._logger.exception(f"Unknown error when update request to IT")
+            self._logger.exception("Unknown error when update request to IT")
             raise UnknownITRequestsError
 
     async def add_comment(self, request_id: int, cmd: models.Comment):

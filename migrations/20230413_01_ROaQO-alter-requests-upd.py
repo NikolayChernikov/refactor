@@ -12,7 +12,6 @@ steps = [
             alter table requests
             add column if not exists priority varchar(20) default 'средний',
             add column if not exists comments bool default false
-                
         """,
         """
             alter table requests

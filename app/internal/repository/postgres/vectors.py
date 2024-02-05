@@ -3,8 +3,6 @@ from typing import List
 from app.internal.repository.postgres.connection import get_connection
 from app.internal.repository.postgres.handlers.collect_response import collect_response
 from app.internal.repository.repository import Repository
-from app.pkg import models
-from app.pkg.models import CreateRequestCommand
 from app.pkg.models.base import Model
 from app.pkg.models.requests import Vector
 

@@ -55,7 +55,6 @@ class Requests(Repository):
                                         )
                                     )
                                 ) as vectors,
-                
                         json_strip_nulls(
                                     json_agg(
                                         json_build_object(
@@ -82,7 +81,7 @@ class Requests(Repository):
                 left join request_tag on requests.id = request_tag.request_id
                 left join tags on tags.id = request_tag.tag_id
                 left join comments on requests.id = comments.request_id
-                where (updated_timestamp > '{time_from}' and updated_timestamp < '{time_to}') or 
+                where (updated_timestamp > '{time_from}' and updated_timestamp < '{time_to}') or
                 (status = 'в работе' or status = 'в очереди')
                 group by requests.id, title, description, assets, status, created_timestamp, updated_timestamp,
                     type, creator, updator, priority, comments, is_tags, creator_role,
@@ -97,9 +96,9 @@ class Requests(Repository):
     async def create(self, cmd: models.CreateRequestCommand) -> models.Request:
         q = """
             insert into requests (
-                title, 
-                description, 
-                assets, 
+                title,
+                description,
+                assets,
                 updated_timestamp,
                 type,
                 creator,
@@ -112,9 +111,9 @@ class Requests(Repository):
                 creator_role,
                 deadline
             ) values (
-                %(title)s, 
-                %(description)s, 
-                %(assets)s, 
+                %(title)s,
+                %(description)s,
+                %(assets)s,
                 current_timestamp,
                 %(type)s,
                 %(creator)s,
@@ -126,13 +125,13 @@ class Requests(Repository):
                 %(sites)s,
                 %(creator_role)s,
                 %(deadline)s
-            ) returning 
-                id, 
-                title, 
-                description, 
-                assets, 
-                status, 
-                created_timestamp, 
+            ) returning
+                id,
+                title,
+                description,
+                assets,
+                status,
+                created_timestamp,
                 updated_timestamp,
                 type,
                 creator,
@@ -197,13 +196,13 @@ class Requests(Repository):
                 sites = %(sites)s,
                 deadline = %(deadline)s
             where id = %(id)s
-            returning 
-                id, 
-                title, 
-                description, 
-                assets, 
-                status, 
-                created_timestamp, 
+            returning
+                id,
+                title,
+                description,
+                assets,
+                status,
+                created_timestamp,
                 updated_timestamp,
                 type,
                 creator,
@@ -225,13 +224,13 @@ class Requests(Repository):
         q = """
             delete from requests
             where id = %(id)s
-            returning 
-                id, 
-                title, 
-                description, 
-                assets, 
-                status, 
-                created_timestamp, 
+            returning
+                id,
+                title,
+                description,
+                assets,
+                status,
+                created_timestamp,
                 updated_timestamp,
                 type,
                 creator,
@@ -256,13 +255,13 @@ class Requests(Repository):
                 updator = %(author)s,
                 comments = true
                 where id = %(request_id)s
-                returning 
-                id, 
-                title, 
-                description, 
-                assets, 
-                status, 
-                created_timestamp, 
+                returning
+                id,
+                title,
+                description,
+                assets,
+                status,
+                created_timestamp,
                 updated_timestamp,
                 type,
                 creator,

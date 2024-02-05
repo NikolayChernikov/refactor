@@ -33,6 +33,12 @@ class Centrifugo:
         self._logger = logger.get_logger(__name__)
         self._publish_url = publish_url
         self._headers = CentrifugoServerHeaders(api_key=api_key)
+        self._errors_compendium = {
+            status.HTTP_404_NOT_FOUND: CentrifugoServer404,
+            status.HTTP_400_BAD_REQUEST: CentrifugoServer400,
+            status.HTTP_403_FORBIDDEN: CentrifugoServer403,
+            status.HTTP_500_INTERNAL_SERVER_ERROR: CentrifugoServer500,
+        }
 
     async def publish(self, data: CentrifugoServerPublish):
         try:
@@ -42,12 +48,8 @@ class Centrifugo:
                     headers=self._headers.to_dict(),
                     data=json.dumps(data.to_dict(), cls=CustomJSONEncoder),
                 )
-                if response.status_code == status.HTTP_404_NOT_FOUND:
-                    raise CentrifugoServer404
-                elif response.status_code == status.HTTP_400_BAD_REQUEST:
-                    raise CentrifugoServer400
-                elif response.status_code == status.HTTP_403_FORBIDDEN:
-                    raise CentrifugoServer403
+                if self._errors_compendium.get(response.status_code, None):
+                    raise self._errors_compendium.get(response.status_code)
                 elif not response.is_success:
                     raise CentrifugoServer500
         except json.JSONDecodeError:
