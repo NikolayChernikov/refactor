@@ -1,3 +1,4 @@
+"""Services requests module."""
 import asyncio
 import logging
 import re
@@ -31,7 +32,9 @@ __all__ = [
 ]
 
 
-class Requests:
+class Requests:  # pylint: disable=too-many-instance-attributes
+    """Requests class."""
+
     _logger: logging.Logger
     _filer: utils.Filer
     _requests_repository: postgres.Requests
@@ -41,7 +44,7 @@ class Requests:
     _vectors_repository: postgres.Vectors
     _centrifugo: clients.Centrifugo
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         logger: Logger,
         filer: utils.Filer,
@@ -61,7 +64,7 @@ class Requests:
         self._telegram = telegram
         self._centrifugo = centrifugo
 
-    async def __read_by_id(self, id: PositiveInt) -> models.Request:
+    async def __read_by_id(self, id: PositiveInt) -> models.Request:  # pylint: disable=redefined-builtin
         return await self._requests_repository.read(
             query=models.RequestQuery(id=id),
         )
@@ -119,7 +122,15 @@ class Requests:
             message += "Появился новый комментарий!"
         return message
 
-    async def create_tags(self, cmd: models.CreateRequestCommand, result: models.Request):
+    async def create_tags(self, cmd: models.CreateRequestCommand, result: models.Request) -> None:
+        """Create tags.
+
+        Args:
+            cmd: create request command.
+            result: request.
+
+        Returns: None.
+        """
         try:
             if cmd.tags:
                 await self._tags_repository.create(result.id, cmd.tags)
@@ -127,7 +138,15 @@ class Requests:
         except Exception:
             self._logger.exception("Error to add tags in db")
 
-    async def create_vectors(self, cmd: models.CreateRequestCommand, result: models.Request):
+    async def create_vectors(self, cmd: models.CreateRequestCommand, result: models.Request) -> None:
+        """Create vectors.
+
+        Args:
+            cmd: create request command.
+            result: request.
+
+        Returns: None.
+        """
         try:
 
             if not cmd.is_all_vectors:
@@ -136,7 +155,15 @@ class Requests:
         except Exception:
             self._logger.exception("Error to add vectors in db")
 
-    async def create_request_cent_pub(self, cmd: models.CreateRequestCommand, result: models.Request):
+    async def create_request_cent_pub(self, cmd: models.CreateRequestCommand, result: models.Request) -> None:
+        """Create request cent pub.
+
+        Args:
+            cmd: create request command.
+            result: request.
+
+        Returns: None.
+        """
         try:
             await self.__publish_to_centrifugo(
                 data=Message(
@@ -152,6 +179,13 @@ class Requests:
         self,
         cmd: models.CreateRequestCommand,
     ) -> models.Request:
+        """Create.
+
+        Args:
+            cmd: create request command.
+
+        Returns: request.
+        """
         assets = []
         try:
             if len(cmd.assets) > 10:
@@ -171,7 +205,7 @@ class Requests:
                 caption=caption,
             )
             if not cmd.messages_ids:
-                raise Exception
+                raise Exception  # pylint: disable=broad-exception-raised
 
             result = await self._requests_repository.create(cmd=cmd)
 
@@ -194,8 +228,15 @@ class Requests:
             self._logger.exception("Unknown error when create request to IT")
             raise UnknownITRequestsError
 
-    async def read(self, id: PositiveInt) -> models.Request:  # noqa: C901
-        try:
+    async def read(self, id: PositiveInt) -> models.Request:  # pylint: disable=redefined-builtin # noqa: C901
+        """Read by id.
+
+        Args:
+            id: request id.
+
+        Returns: request.
+        """
+        try:  # pylint: disable=no-else-raise
             request = await self.__read_by_id(id=id)
         except Exception:
             self._logger.exception("Ошибка выгрузки запроса из БД")
@@ -215,13 +256,28 @@ class Requests:
                     self._logger.exception("Ошибка выгрузки комментариев")
             return request
 
-    async def delete(self, id: PositiveInt) -> models.Request:
+    async def delete(self, id: PositiveInt) -> models.Request:  # pylint: disable=redefined-builtin
+        """Delete by id.
+
+        Args:
+            id: request id.
+
+        Returns: request.
+        """
         deleted = await self._requests_repository.delete(cmd=models.DeleteRequestCommand(id=id))
         self._filer.delete(files=deleted.assets)
         await self._telegram.delete_messages(deleted.messages_ids)
         return deleted
 
     async def read_all_by_time(self, time_from: int, time_to: int) -> List[models.RequestFull]:
+        """Read all by time.
+
+        Args:
+            time_from: time from.
+            time_to: time to.
+
+        Returns: list with request full.
+        """
         try:
             time_from_new = datetime.fromtimestamp(time_from)
             time_to_new = datetime.fromtimestamp(time_to)
@@ -230,7 +286,11 @@ class Requests:
             return []
 
     async def read_all(self) -> List[models.Request]:  # noqa: C901
-        try:
+        """Read all.
+
+        Returns: list with request.
+        """
+        try:  # pylint: disable=no-else-return
             requests = await self._requests_repository.read_all()
             vectors = await self._vectors_repository.read_all()
         except EmptyResult:
@@ -257,7 +317,15 @@ class Requests:
                         el.comments_objects = comments
             return requests
 
-    async def get_comments_by_id(self, cmd, result):
+    async def get_comments_by_id(self, cmd, result) -> None:
+        """Get comments by id.
+
+        Args:
+            cmd: cmd.
+            result: result.
+
+        Returns: None.
+        """
         try:
             comments = await self._comments_repository.read(cmd.id)
         except Exception:
@@ -265,7 +333,15 @@ class Requests:
         else:
             result.comments_objects = comments
 
-    async def update_tags(self, cmd, result):
+    async def update_tags(self, cmd, result) -> None:
+        """Update tags.
+
+        Args:
+            cmd: cmd.
+            result: result.
+
+        Returns: None.
+        """
         if cmd.is_tags:
             await self._tags_repository.delete(result.id)
             await self._tags_repository.create(result.id, cmd.tags)
@@ -274,7 +350,15 @@ class Requests:
             await self._tags_repository.delete(result.id)
             result.tags = []
 
-    async def update_vectors(self, cmd, result):
+    async def update_vectors(self, cmd, result) -> None:
+        """Update vectors.
+
+        Args:
+            cmd: cmd.
+            result: result.
+
+        Returns: None.
+        """
         if cmd.is_all_vectors:
             await self._vectors_repository.delete(result.id)
         if not cmd.is_all_vectors:
@@ -288,6 +372,13 @@ class Requests:
             result.vectors = []
 
     async def update(self, cmd: models.UpdateRequestCommand) -> models.Request:  # noqa: C901
+        """Update.
+
+        Args:
+            cmd: update request command.
+
+        Returns: request.
+        """
         old_assets, new_assets = [], []
         try:
             if len(cmd.assets) > 10:
@@ -312,7 +403,7 @@ class Requests:
                 disable_notification=True,
             )
             if not cmd.messages_ids:
-                raise Exception
+                raise Exception  # pylint: disable=broad-exception-raised
             if not cmd.vectors:
                 cmd.is_all_vectors = True
             if not cmd.tags:
@@ -329,7 +420,8 @@ class Requests:
             asyncio.create_task(
                 self.__publish_to_centrifugo(
                     data=Message(
-                        message=f"Обновлен запрос к IT {cmd.title} пользователем {cmd.updator} \n" f"ID запроса - {cmd.id}"
+                        message=f"Обновлен запрос к IT {cmd.title} пользователем {cmd.updator} \n"
+                        f"ID запроса - {cmd.id}"
                     ),
                     channel=settings.CENT_IT_REQUEST_CHANNEL,
                 )
@@ -345,15 +437,23 @@ class Requests:
             self._logger.exception("Unknown error when update request to IT")
             raise UnknownITRequestsError
 
-    async def add_comment(self, request_id: int, cmd: models.Comment):
-        try:
+    async def add_comment(self, request_id: int, cmd: models.Comment) -> models.Comment:
+        """Add comment.
+
+        Args:
+            request_id: request id.
+            cmd: comment.
+
+        Returns: comment.
+        """
+        try:  # pylint: disable=no-else-raise
             cmd.request_id = request_id
             comment = await self._comments_repository.create(cmd)
         except Exception:
             self._logger.exception("Ошибка создания коммента в БД")
             raise UnknownCommentsError
         else:
-            try:
+            try:  # pylint: disable=no-else-raise
                 request = await self._requests_repository.update_comment(cmd)
                 data = pydantic.parse_obj_as(UpdateRequestCommand, request)
                 caption = self.__collect_caption_update(data, new_comment=True)
@@ -375,6 +475,10 @@ class Requests:
                 return comment
 
     async def get_all_tags(self) -> List[models.Tag]:
+        """Get all tags.
+
+        Returns: list with tag.
+        """
         try:
             return await self._tags_repository.read_all()
         except Exception:

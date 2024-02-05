@@ -1,3 +1,4 @@
+"""Base client module."""
 from typing import Literal
 
 import httpx
@@ -10,6 +11,8 @@ __all__ = ["BaseClient"]
 
 
 class BaseClient:
+    """Base client class."""
+
     client_name: str
     AUTH_X_TOKEN: pydantic.SecretStr
     url: pydantic.AnyUrl
@@ -21,12 +24,21 @@ class BaseClient:
         logger: Logger,
         client_name: str,
     ):
-        self.AUTH_X_TOKEN = x_token
+        self.AUTH_X_TOKEN = x_token  # pylint: disable=invalid-name
         self.url = url
         self.client_name = client_name
         self._logger = logger.get_logger(__name__)
 
     async def do_request(self, method: Literal["GET", "POST", "DELETE"], path: str = None, **kwargs) -> httpx.Response:
+        """Send async request.
+
+        Args:
+            method: HTTP method.
+            path: Endpoint path.
+            **kwargs: Query params.
+
+        Returns: HTTP response.
+        """
         headers = {"X-ACCESS-TOKEN": self.AUTH_X_TOKEN.get_secret_value()}
         async with httpx.AsyncClient(headers=headers, timeout=10) as client:
             try:
@@ -38,8 +50,8 @@ class BaseClient:
                 )
             if response.is_success:
                 return response
-            else:
-                self._logger.exception("Response - unsuccess")
-                raise ClientException(
-                    message=f"{self.client_name} is not available now",
-                )
+
+            self._logger.exception("Response - unsuccess")
+            raise ClientException(
+                message=f"{self.client_name} is not available now",
+            )

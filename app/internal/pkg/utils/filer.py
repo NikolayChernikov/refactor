@@ -1,3 +1,4 @@
+"""Filer module."""
 import base64
 import os
 from datetime import datetime
@@ -15,6 +16,8 @@ __all__ = [
 
 
 class Filer:
+    """Filer class."""
+
     _logger: Logger
     _static_dir: Path
     _static_dir_internal: Path
@@ -26,7 +29,8 @@ class Filer:
         static_dir: Path,
         static_dir_internal: Path,
         static_url: Path,
-    ):
+    ) -> None:
+        """Init service."""
         self._logger = logger.get_logger(__name__)
         self._static_dir = static_dir
         self._static_dir_internal = static_dir_internal
@@ -37,6 +41,14 @@ class Filer:
         base64_: str,
         name: Optional[Union[str, int]] = None,
     ) -> Path:
+        """Save image.
+
+        Args:
+            base64_: bytes file.
+            name: file name
+
+        Returns: Path.
+        """
         try:
             filename = f"{int(datetime.utcnow().timestamp())}.jpeg"
             if name:
@@ -49,7 +61,14 @@ class Filer:
             raise BadBase64OfImage
 
     @staticmethod
-    def delete(files: List[str]):
+    def delete(files: List[str]) -> None:
+        """Delete files.
+
+        Args:
+            files: list with path to files.
+
+        Returns: None.
+        """
         for path in files:
             try:
                 os.remove(path)

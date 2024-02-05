@@ -9,6 +9,10 @@ from app.pkg.settings import settings
 
 
 def create_app() -> FastAPI:
+    """Create FastAPI application
+
+    Returns: FastAPIInstance
+    """
     app = FastAPI(dependencies=[Depends(get_x_token_key)])
     app.mount(
         path="/static",

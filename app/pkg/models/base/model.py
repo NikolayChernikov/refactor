@@ -1,3 +1,4 @@
+"""Base model module."""
 from __future__ import annotations
 
 from datetime import datetime
@@ -11,6 +12,8 @@ Model = TypeVar("Model", bound="BaseModel")
 
 
 class BaseModel(pydantic.BaseModel):
+    """Base model class."""
+
     def to_dict(self, show_secrets: bool = False, values: Dict[Any, Any] = None, **kwargs) -> Dict[Any, Any]:
         """Make transfer model to Dict object."""
         values = self.dict(**kwargs).items() if not values else values.items()
@@ -26,6 +29,7 @@ class BaseModel(pydantic.BaseModel):
         return r
 
     def to_list(self, show_secrets: bool = False, **kwargs) -> List[Any]:
+        """Convert to list."""
         r = []
         for v in self.dict(**kwargs).values():
             if isinstance(v, pydantic.SecretBytes):
@@ -36,9 +40,10 @@ class BaseModel(pydantic.BaseModel):
         return r
 
     def to_string(self, show_secrets: bool = False, **kwargs) -> str:
+        """Convert to string."""
         values = []
         for v in self.to_list(show_secrets=show_secrets, **kwargs):
-            if isinstance(v, datetime) or isinstance(v, str):
+            if isinstance(v, datetime) or isinstance(v, str):  # pylint: disable=consider-merging-isinstance
                 values.append(f"'{v}'")
             else:
                 values.append(str(v))
@@ -56,6 +61,8 @@ class BaseModel(pydantic.BaseModel):
         return self
 
     class Config:
+        """Config class."""
+
         use_enum_values = True
         json_encoders = {
             pydantic.SecretStr: lambda v: v.get_secret_value() if v else None,

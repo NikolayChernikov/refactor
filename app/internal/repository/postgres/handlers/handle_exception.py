@@ -1,3 +1,4 @@
+"""Handle exception module."""
 from typing import Callable
 
 from psycopg2 import Error as QueryError

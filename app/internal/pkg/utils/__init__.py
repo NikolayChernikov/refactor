@@ -1,3 +1,4 @@
+"""Utils module."""
 from dependency_injector import containers, providers
 
 from app.internal.pkg.utils.filer import Filer
@@ -11,6 +12,8 @@ __all__ = [
 
 
 class Utils(containers.DeclarativeContainer):
+    """Utils class."""
+
     configuration = providers.Configuration(
         name="settings",
         pydantic_settings=[settings],

@@ -1,3 +1,4 @@
+"""X auth token module."""
 from fastapi import Security
 from fastapi.security import APIKeyHeader
 
@@ -10,7 +11,14 @@ __all__ = ["get_x_token_key"]
 x_api_key_header = APIKeyHeader(name="X-ACCESS-TOKEN")
 
 
-async def get_x_token_key(api_key_header: str = Security(x_api_key_header)):
+async def get_x_token_key(api_key_header: str = Security(x_api_key_header)) -> None:
+    """Async get token key.
+
+    Args:
+        api_key_header: api key header.
+
+    Returns: None.
+    """
     value = settings.X_API_TOKEN.get_secret_value()
     if api_key_header != value:
         raise InvalidCredentials

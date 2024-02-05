@@ -1,3 +1,4 @@
+"""Auth static files module."""
 from fastapi import Request
 from fastapi.staticfiles import StaticFiles
 from pydantic import SecretStr
@@ -10,6 +11,8 @@ __all__ = [
 
 
 class AuthStaticFiles(StaticFiles):
+    """Auth static files class."""
+
     _x_static_token: SecretStr
 
     def __init__(self, x_static_token: SecretStr, *args, **kwargs):

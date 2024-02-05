@@ -1,3 +1,4 @@
+"""Requests routes module."""
 from typing import List
 
 from dependency_injector.wiring import Provide, inject
@@ -21,6 +22,13 @@ router = APIRouter(prefix="/requests", tags=["Requests to IT"])
 async def read_all(
     service: Requests = Depends(Provide[Services.requests]),
 ) -> List[models.Request]:
+    """Read all data.
+
+    Args:
+        service: service requests.
+
+    Returns: list with requests.
+    """
     return await service.read_all()
 
 
@@ -36,6 +44,15 @@ async def read_all_by_time(
     time_to: int,
     service: Requests = Depends(Provide[Services.requests]),
 ) -> List[models.RequestFull]:
+    """Read all data by time.
+
+    Args:
+        time_from: time from.
+        time_to: time to.
+        service: requests service.
+
+    Returns: list with requests.
+    """
     return await service.read_all_by_time(time_from, time_to)
 
 
@@ -47,9 +64,17 @@ async def read_all_by_time(
 )
 @inject
 async def read(
-    id: PositiveInt,
+    id: PositiveInt,  # pylint: disable=redefined-builtin
     service: Requests = Depends(Provide[Services.requests]),
 ) -> models.Request:
+    """Read data.
+
+    Args:
+        id: request id.
+        service: requests service.
+
+    Returns: request.
+    """
     return await service.read(id=id)
 
 
@@ -64,6 +89,14 @@ async def create(
     cmd: models.CreateRequestCommand,
     service: Requests = Depends(Provide[Services.requests]),
 ) -> models.Request:
+    """Insert data.
+
+    Args:
+        cmd: create request command.
+        service: requests service.
+
+    Returns: request.
+    """
     return await service.create(cmd=cmd)
 
 
@@ -78,6 +111,14 @@ async def update(
     cmd: models.UpdateRequestCommand,
     service: Requests = Depends(Provide[Services.requests]),
 ) -> models.Request:
+    """Update data.
+
+    Args:
+        cmd: update request command.
+        service: requests service.
+
+    Returns: request.
+    """
     return await service.update(cmd=cmd)
 
 
@@ -89,9 +130,17 @@ async def update(
 )
 @inject
 async def delete(
-    id: PositiveInt,
+    id: PositiveInt,  # pylint: disable=redefined-builtin
     service: Requests = Depends(Provide[Services.requests]),
 ) -> models.Request:
+    """Delete data.
+
+    Args:
+        id: request id.
+        service: requests service.
+
+    Returns: request.
+    """
     return await service.delete(id=id)
 
 
@@ -103,10 +152,19 @@ async def delete(
 )
 @inject
 async def add_comment(
-    id: PositiveInt,
+    id: PositiveInt,  # pylint: disable=redefined-builtin
     cmd: models.Comment,
     service: Requests = Depends(Provide[Services.requests]),
 ) -> models.Comment:
+    """Read data.
+
+    Args:
+        id: request id.
+        cmd: comment model.
+        service: requests service.
+
+    Returns: comment model.
+    """
     return await service.add_comment(id, cmd)
 
 
@@ -120,4 +178,11 @@ async def add_comment(
 async def get_all_tags(
     service: Requests = Depends(Provide[Services.requests]),
 ) -> List[Tag]:
+    """Read data.
+
+    Args:
+        service: requests service.
+
+    Returns: list with tag.
+    """
     return await service.get_all_tags()

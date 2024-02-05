@@ -7,6 +7,8 @@ __all__ = ["BaseConnector"]
 
 
 class BaseConnector:
+    """Base connector class."""
+
     @abstractmethod
     def get_dsn(self) -> str:
         """Build DSN of connection."""
@@ -15,7 +17,7 @@ class BaseConnector:
 
     @abstractmethod
     @asynccontextmanager
-    async def get_connect(self):
+    async def get_connect(self) -> None:
         """Getting connection pool in asynchronous context."""
 
         raise NotImplementedError()

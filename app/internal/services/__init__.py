@@ -1,3 +1,4 @@
+"""Services module."""
 from dependency_injector import containers, providers
 
 from app.internal.pkg.clients import Clients
@@ -13,6 +14,8 @@ __all__ = [
 
 
 class Services(containers.DeclarativeContainer):
+    """Services class."""
+
     repositories = providers.Container(Repositories)
     postgres = providers.Container(repositories.postgres)
     logger = providers.Container(LoggerContainer)

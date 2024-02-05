@@ -34,7 +34,7 @@ repos:
       language: python
       types: [python]
       args:
-        - "--line-length=125"
+        - "--line-length=120"
 
 - repo: https://github.com/PyCQA/flake8
   rev: 4.0.1
@@ -44,6 +44,18 @@ repos:
       language: python
       types: [python]
       args:
-       - "--max-line-length=125"
+       - "--max-line-length=120"
        - "--per-file-ignores=__init__.py:F401"
        - "--ignore=E203,W503"
+
+- repo: https://github.com/pycqa/pylint
+  rev: v3.0.1
+  hooks:
+    - id: pylint
+      name: Pylint static code analyser
+      language: python
+      types: [python]
+      args:
+        - "--disable=E0401,R0903,W0707,W0718,R0401,R0801"
+        - "--max-line-length=120"
+        - "--ignore-paths=^migrations/.*$"

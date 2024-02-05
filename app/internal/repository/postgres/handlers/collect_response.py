@@ -1,3 +1,4 @@
+"""Collect response module."""
 import functools
 from datetime import datetime
 from functools import wraps
@@ -15,7 +16,16 @@ def collect_response(  # noqa: C901
     fn=None,
     convert_to_pydantic=True,
     nullable=False,
-):
+) -> None:
+    """Save image.
+
+    Args:
+        fn: bool arg.
+        convert_to_pydantic: bool arg.
+        nullable: bool arg.
+
+    Returns: None.
+    """
     # fn is None when params for decorator are provided
     if fn is None:
         return functools.partial(

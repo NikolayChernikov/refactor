@@ -1,3 +1,4 @@
+"""Vectors module."""
 from typing import List
 
 from app.internal.repository.postgres.connection import get_connection
@@ -12,7 +13,18 @@ __all__ = [
 
 
 class Vectors(Repository):
-    def get_tmp(self, cmd: List[Vector], request_id: int) -> str:
+    """Vectors class."""
+
+    @staticmethod
+    def get_tmp(cmd: List[Vector], request_id: int) -> str:
+        """Get tmp.
+
+        Args:
+            cmd: list with vector.
+            request_id: request id.
+
+        Returns: string res.
+        """
         res = []
         for i in cmd:
             res.append(
@@ -21,7 +33,15 @@ class Vectors(Repository):
         return ", ".join(res)
 
     @collect_response
-    async def create(self, request_id: int, cmd: List[Vector]) -> List[Vector]:
+    async def create(self, request_id: int, cmd: List[Vector]) -> List[Vector]:  # pylint: disable=arguments-differ
+        """Insert data to DB.
+
+        Args:
+            request_id: request id.
+            cmd: list with vector.
+
+        Returns: list with vector.
+        """
         params = self.get_tmp(cmd, request_id)
         q = f"""
                 insert into vectors (request_id, vector)
@@ -33,7 +53,14 @@ class Vectors(Repository):
             return await cur.fetchall()
 
     @collect_response
-    async def read(self, request_id: int) -> Vector:
+    async def read(self, request_id: int) -> Vector:  # pylint: disable=arguments-renamed
+        """Read data from DB.
+
+        Args:
+            request_id: request id.
+
+        Returns: vector.
+        """
         q = """
                 select request_id, vector
                 from vectors
@@ -45,6 +72,10 @@ class Vectors(Repository):
 
     @collect_response
     async def read_all(self) -> List[Vector]:
+        """Read all data from DB.
+
+        Returns: list with vector.
+        """
         q = """
                 select request_id, vector
                 from vectors
@@ -54,10 +85,24 @@ class Vectors(Repository):
             return await cur.fetchall()
 
     async def update(self, cmd: Model) -> Model:
+        """Update data from DB.
+
+        Args:
+            cmd: model.
+
+        Returns: model.
+        """
         raise NotImplementedError
 
     @collect_response
-    async def delete(self, request_id: int) -> List[Vector]:
+    async def delete(self, request_id: int) -> List[Vector]:  # pylint: disable=arguments-renamed
+        """Delete data from DB.
+
+        Args:
+            request_id: request id.
+
+        Returns: list with vector.
+        """
         q = """
                 delete from vectors where request_id = %(request_id)s
                 returning request_id, vector

@@ -1,3 +1,4 @@
+"""Clients module."""
 from dependency_injector import containers, providers
 
 from app.internal.pkg.clients.centrifugo.client import Centrifugo
@@ -10,6 +11,8 @@ __all__ = ["Clients", "Telegram", "Centrifugo"]
 
 
 class Clients(containers.DeclarativeContainer):
+    """Clients class."""
+
     configuration = providers.Configuration(name="settings", pydantic_settings=[settings])
     logger = providers.Container(LoggerContainer)
 

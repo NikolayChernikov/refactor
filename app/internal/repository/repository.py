@@ -1,3 +1,5 @@
+"""Repository module."""
+# pylint: disable=missing-function-docstring
 from abc import ABC
 from typing import List, TypeVar
 

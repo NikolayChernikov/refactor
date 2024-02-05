@@ -1,3 +1,4 @@
+"""Centrifugo module."""
 import json
 import logging
 
@@ -20,6 +21,8 @@ from app.pkg.models.exceptions.centrifugo_server import (
 
 
 class Centrifugo:
+    """Centrifugo class."""
+
     _logger: logging.Logger
     _publish_url: pydantic.HttpUrl
     _headers: CentrifugoServerHeaders
@@ -29,7 +32,8 @@ class Centrifugo:
         logger: Logger,
         publish_url: pydantic.HttpUrl,
         api_key: pydantic.SecretStr,
-    ):
+    ) -> None:
+        """Init application"""
         self._logger = logger.get_logger(__name__)
         self._publish_url = publish_url
         self._headers = CentrifugoServerHeaders(api_key=api_key)
@@ -40,7 +44,14 @@ class Centrifugo:
             status.HTTP_500_INTERNAL_SERVER_ERROR: CentrifugoServer500,
         }
 
-    async def publish(self, data: CentrifugoServerPublish):
+    async def publish(self, data: CentrifugoServerPublish) -> None:
+        """Do async publish.
+
+        Args:
+            data: HTTP method.
+
+        Returns: None.
+        """
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(
@@ -50,7 +61,7 @@ class Centrifugo:
                 )
                 if self._errors_compendium.get(response.status_code, None):
                     raise self._errors_compendium.get(response.status_code)
-                elif not response.is_success:
+                if not response.is_success:
                     raise CentrifugoServer500
         except json.JSONDecodeError:
             self._logger.exception(f"Not valid data for encode to json: {data}")

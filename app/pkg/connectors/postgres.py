@@ -12,13 +12,15 @@ __all__ = ["Postgres"]
 
 
 class Postgres(BaseConnector):
+    """Postgres class."""
+
     _username: str
     _password: str
     _host: str
     _port: pydantic.PositiveInt
     _database_name: str
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         username: str,
         password: pydantic.SecretStr,
@@ -36,7 +38,11 @@ class Postgres(BaseConnector):
     def get_dsn(self):
         """Description of ``BaseConnector.get_dsn``."""
         return (
-            f"postgresql://" f"{self._username}:" f"{self._password}@" f"{self._host}:{self._port}/" f"{self._database_name}"
+            f"postgresql://"
+            f"{self._username}:"
+            f"{self._password}@"
+            f"{self._host}:{self._port}/"
+            f"{self._database_name}"
         )
 
     @asynccontextmanager

@@ -1,3 +1,4 @@
+"""Postgres module."""
 from dependency_injector import containers, providers
 
 from app.internal.repository.postgres.comments import Comments
@@ -17,6 +18,8 @@ __all__ = [
 
 
 class Postgres(containers.DeclarativeContainer):
+    """Postgres class."""
+
     requests = providers.Factory(Requests)
     comments = providers.Factory(Comments)
     tags = providers.Factory(Tags)

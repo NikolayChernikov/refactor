@@ -1,3 +1,4 @@
+"""Requests model class."""
 from enum import Enum
 from typing import List, Optional
 
@@ -25,15 +26,21 @@ __all__ = [
 
 
 class Message(BaseModel):
+    """Message model."""
+
     message: str
 
 
 class Tag(BaseModel):
+    """Tag model."""
+
     id: PositiveInt
     tag: str
 
 
 class Statuses(str, Enum):
+    """Statuses model."""
+
     CANCELED = "отклонено"
     IN_QUEUE = "в очереди"
     IN_WORK = "в работе"
@@ -41,18 +48,24 @@ class Statuses(str, Enum):
 
 
 class Types(str, Enum):
+    """Types model."""
+
     REQUEST = "запрос"
     FIRE = "пожар"
     TASK = "задача"
 
 
 class Priority(str, Enum):
+    """Priority model."""
+
     LOW = "low"
-    Medium = "medium"
+    MEDIUM = "medium"  # pylint: disable=invalid-name
     HIGH = "high"
 
 
 class Comment(BaseModel):
+    """Comment model."""
+
     id: Optional[PositiveInt]
     request_id: Optional[PositiveInt]
     comment: str
@@ -62,11 +75,15 @@ class Comment(BaseModel):
 
 
 class Vector(BaseModel):
+    """Vector model."""
+
     request_id: Optional[int]
     vector: str
 
 
 class BaseRequest(BaseModel):
+    """Base request model."""
+
     title: str
     description: str
     updator: str
@@ -79,7 +96,7 @@ class BaseRequest(BaseModel):
     updated_timestamp: Optional[int]
     comments: bool = False
     comments_objects: Optional[List[Comment]]
-    priority: Optional[Priority] = Priority.Medium
+    priority: Optional[Priority] = Priority.MEDIUM
     is_tags: Optional[bool]
     sites: Optional[List[str]]
     tags: Optional[List[Tag]]
@@ -89,6 +106,8 @@ class BaseRequest(BaseModel):
 
 
 class Request(BaseRequest):
+    """Request model."""
+
     id: PositiveInt
     creator: str
     creator_role: Optional[str]
@@ -96,11 +115,14 @@ class Request(BaseRequest):
 
 
 class ReadRequest(BaseRequest):
+    """Read request model."""
+
     id: PositiveInt
     creator: str
 
     @validator("assets")
-    def set_static_url_to_assets(cls, ass: List[str]) -> List[str]:
+    def set_static_url_to_assets(cls, ass: List[str]) -> List[str]:  # pylint: disable=no-self-argument
+        """Set static url to assets."""
         return list(
             map(
                 lambda a: a.replace(str(settings.STATIC_DIR_INTERNAL), str(settings.STATIC_URL)),
@@ -110,21 +132,28 @@ class ReadRequest(BaseRequest):
 
 
 class RequestQuery(BaseModel):
+    """Request query model."""
+
     id: PositiveInt
 
 
 class CreateRequestCommand(BaseRequest):
+    """Create request command model."""
+
     messages_ids: Optional[List[int]]
 
 
 class UpdateRequestCommand(BaseRequest):
+    """Update request command model."""
+
     id: PositiveInt
     creator: Optional[str]
     creator_role: Optional[str]
     messages_ids: Optional[List[int]]
 
     @validator("assets")
-    def set_internal_dir_to_assets(cls, ass: List[str]) -> List[str]:
+    def set_internal_dir_to_assets(cls, ass: List[str]) -> List[str]:  # pylint: disable=no-self-argument
+        """Set internal dit to assets."""
         return list(
             map(
                 lambda a: a.replace(str(settings.STATIC_URL), str(settings.STATIC_DIR_INTERNAL)),
@@ -134,15 +163,21 @@ class UpdateRequestCommand(BaseRequest):
 
 
 class DeleteRequestCommand(BaseModel):
+    """Delete request command model."""
+
     id: PositiveInt
 
 
 class RequestTagBlock(BaseModel):
+    """Request tag block model."""
+
     request_id: int
     tag_id: int
 
 
 class RequestFull(BaseModel):
+    """Request full model."""
+
     title: str
     description: str
     updator: str
@@ -166,6 +201,7 @@ class RequestFull(BaseModel):
 
     @staticmethod
     def create_list(data):
+        """Create list."""
         result = []
         for i in data:
             if i and i not in result:
@@ -173,14 +209,16 @@ class RequestFull(BaseModel):
         return result
 
     @root_validator(pre=True)
-    def convert(cls, values):
+    def convert(cls, values):  # pylint: disable=no-self-argument
+        """Convert values."""
         values["tags"] = cls.create_list(values["tags"])
         values["vectors"] = cls.create_list(values["vectors"])
         values["comments_objects"] = cls.create_list(values["comments_objects"])
         return values
 
     @validator("assets")
-    def set_static_url_to_assets(cls, ass: List[str]) -> List[str]:
+    def set_static_url_to_assets(cls, ass: List[str]) -> List[str]:  # pylint: disable=no-self-argument
+        """Set static url to assets."""
         return list(
             map(
                 lambda a: a.replace(str(settings.STATIC_DIR_INTERNAL), str(settings.STATIC_URL)),

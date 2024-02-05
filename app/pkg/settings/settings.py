@@ -1,3 +1,4 @@
+"""Settings module."""
 import pathlib
 from functools import lru_cache
 
@@ -10,12 +11,18 @@ from app.pkg.models import Logger
 
 
 class _Settings(BaseSettings):
+    """Private settings class."""
+
     class Config:
+        """Config class."""
+
         env_file_encoding = "utf-8"
         arbitrary_types_allowed = True
 
 
 class Settings(_Settings):
+    """Settings class."""
+
     # FastAPI
     X_API_TOKEN: pydantic.SecretStr
 
@@ -54,7 +61,8 @@ class Settings(_Settings):
     ELEMENT_ROOM_ID_REQUESTS_NO_NOTIFICATION: str
 
     @validator("STATIC_DIR_INTERNAL")
-    def create_directory(cls, v: pathlib.Path) -> pathlib.Path:
+    def create_directory(cls, v: pathlib.Path) -> pathlib.Path:  # pylint: disable=no-self-argument
+        """Create directory."""
         if not v.exists():
             v.mkdir(parents=True, exist_ok=True)
         return v
@@ -62,4 +70,11 @@ class Settings(_Settings):
 
 @lru_cache()
 def get_settings(env_file: str = ".env") -> Settings:
+    """Get settings.
+
+    Args:
+        env_file: path to env file
+
+    Returns: settigns.
+    """
     return Settings(_env_file=find_dotenv(env_file))

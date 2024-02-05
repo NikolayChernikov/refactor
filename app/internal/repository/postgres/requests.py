@@ -1,3 +1,4 @@
+"""Requests module."""
 from typing import List
 
 from app.internal.repository.postgres.connection import get_connection
@@ -11,8 +12,14 @@ __all__ = [
 
 
 class Requests(Repository):
+    """Requests class."""
+
     @collect_response
     async def read_all(self) -> List[models.Request]:
+        """Read all data from DB.
+
+        Returns: list with requests.
+        """
         q = """
             select
                 id,
@@ -42,6 +49,14 @@ class Requests(Repository):
 
     @collect_response
     async def read_full_data(self, time_from, time_to) -> List[models.RequestFull]:
+        """Read full data from DB.
+
+        Args:
+            time_from: time from.
+            time_to: time to.
+
+        Returns: list with requests.
+        """
         q = f"""
                 select
                     requests.id, title, description, assets, status, created_timestamp, updated_timestamp,
@@ -94,6 +109,14 @@ class Requests(Repository):
 
     @collect_response
     async def create(self, cmd: models.CreateRequestCommand) -> models.Request:
+        """Insert data to DB.
+
+        Args:
+            time_from: time from.
+            time_to: time to.
+
+        Returns: list with requests.
+        """
         q = """
             insert into requests (
                 title,
@@ -151,6 +174,13 @@ class Requests(Repository):
 
     @collect_response
     async def read(self, query: models.RequestQuery) -> models.Request:
+        """Read data from DB.
+
+        Args:
+            query: request query
+
+        Returns: request.
+        """
         q = """
             select
                 id,
@@ -180,6 +210,13 @@ class Requests(Repository):
 
     @collect_response
     async def update(self, cmd: models.UpdateRequestCommand) -> models.Request:
+        """Update data from DB.
+
+        Args:
+            cmd: update request command.
+
+        Returns: request.
+        """
         q = """
             update requests
             set title = %(title)s,
@@ -221,6 +258,13 @@ class Requests(Repository):
 
     @collect_response
     async def delete(self, cmd: models.DeleteRequestCommand) -> models.Request:
+        """Delete data from DB.
+
+        Args:
+            cmd: delete request command.
+
+        Returns: requests.
+        """
         q = """
             delete from requests
             where id = %(id)s
@@ -249,6 +293,13 @@ class Requests(Repository):
 
     @collect_response
     async def update_comment(self, cmd: models.Comment) -> models.Request:
+        """Update comment from DB.
+
+        Args:
+            cmd: comment.
+
+        Returns: request.
+        """
         q = """
                 update requests
                 set updated_timestamp = now(),

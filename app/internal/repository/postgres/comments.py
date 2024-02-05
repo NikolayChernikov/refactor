@@ -1,3 +1,4 @@
+"""Comments module."""
 from typing import List
 
 from app.internal.repository.postgres.connection import get_connection
@@ -12,6 +13,8 @@ __all__ = [
 
 
 class Comments(Repository):
+    """Comments class."""
+
     @collect_response
     async def create(self, cmd: models.Comment) -> models.Comment:
         q = """
@@ -24,7 +27,7 @@ class Comments(Repository):
             return await cur.fetchone()
 
     @collect_response
-    async def read(self, request_id: int) -> List[models.Comment]:
+    async def read(self, request_id: int) -> List[models.Comment]:  # pylint: disable=arguments-renamed
         q = """
                 select id, comment, author, time, author_role, request_id from comments
                 where request_id = %(request_id)s

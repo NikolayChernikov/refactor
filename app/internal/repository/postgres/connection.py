@@ -1,3 +1,4 @@
+"""Connection module."""
 from contextlib import asynccontextmanager
 
 from aiopg.connection import Cursor

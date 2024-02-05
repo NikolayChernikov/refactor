@@ -58,7 +58,7 @@ class Server:
         __routes__.register_routes(app)
 
     @staticmethod
-    def _register_containers(app: FastAPIInstance):
+    def _register_containers(app: FastAPIInstance):  # pylint: disable=unused-argument
         """Register services __service__ using dependency injection pattern.
 
         Args:
@@ -66,7 +66,6 @@ class Server:
 
         Returns: None
         """
-        ...
 
     @staticmethod
     def __register_cors_origins(app: FastAPIInstance):
