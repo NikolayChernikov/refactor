@@ -2,8 +2,8 @@
 
 from dependency_injector import containers, providers
 
-from app.pkg.settings import settings
 from app.pkg.connectors.postgres import Postgres
+from app.pkg.settings import settings
 
 __all__ = [
     "Connectors",

@@ -25,9 +25,7 @@ class CentrifugoServerHeaders(BaseCentrifugoServer):
     api_key: pydantic.SecretStr
     content_type: str = pydantic.Field(default="application/json")
 
-    def to_dict(
-        self, show_secrets: bool = False, values: Dict[Any, Any] = None, **kwargs
-    ) -> Dict[Any, Any]:
+    def to_dict(self, show_secrets: bool = False, values: Dict[Any, Any] = None, **kwargs) -> Dict[Any, Any]:
         return {
             "Authorization": f"apikey {self.api_key.get_secret_value()}",
             "Content-type": self.content_type,

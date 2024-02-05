@@ -1,7 +1,7 @@
 import functools
-from functools import wraps
-from typing import List, Union, Dict
 from datetime import datetime
+from functools import wraps
+from typing import Dict, List, Union
 
 import pydantic
 from psycopg2.extras import RealDictRow
@@ -12,9 +12,9 @@ from app.pkg.models.exceptions.repository import EmptyResult
 
 
 def collect_response(
-        fn=None,
-        convert_to_pydantic=True,
-        nullable=False,
+    fn=None,
+    convert_to_pydantic=True,
+    nullable=False,
 ):
     # fn is None when params for decorator are provided
     if fn is None:
@@ -81,7 +81,7 @@ async def __convert_memory_viewer(r: Union[RealDictRow, Dict]):
             r[key] = value.tobytes()
         elif isinstance(value, datetime):
             r[key] = int(value.timestamp())
-        elif key == 'time':
+        elif key == "time":
             try:
                 new_time = datetime.strptime(str(value), "%Y-%m-%dT%H:%M:%S.%f")
             except Exception:

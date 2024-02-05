@@ -4,7 +4,7 @@ add tag request table
 
 from yoyo import step
 
-__depends__ = {'20230414_03_Fd6dV-add-request-vectors-table'}
+__depends__ = {"20230414_03_Fd6dV-add-request-vectors-table"}
 
 steps = [
     step(
@@ -18,6 +18,6 @@ steps = [
         """,
         """
             drop table if exists request_tag
-        """
+        """,
     )
 ]

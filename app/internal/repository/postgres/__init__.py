@@ -6,7 +6,6 @@ from app.internal.repository.postgres.requests import Requests
 from app.internal.repository.postgres.tags import Tags
 from app.internal.repository.postgres.vectors import Vectors
 
-
 __all__ = [
     "get_connection",
     "Postgres",

@@ -4,7 +4,7 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, status
 from pydantic import PositiveInt
 
-from app.internal.services import Services, Requests
+from app.internal.services import Requests, Services
 from app.pkg import models
 from app.pkg.models import Tag
 
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/requests", tags=["Requests to IT"])
 )
 @inject
 async def read_all(
-        service: Requests = Depends(Provide[Services.requests]),
+    service: Requests = Depends(Provide[Services.requests]),
 ) -> List[models.Request]:
     return await service.read_all()
 
@@ -32,9 +32,9 @@ async def read_all(
 )
 @inject
 async def read_all_by_time(
-        time_from: int,
-        time_to: int,
-        service: Requests = Depends(Provide[Services.requests]),
+    time_from: int,
+    time_to: int,
+    service: Requests = Depends(Provide[Services.requests]),
 ) -> List[models.RequestFull]:
     return await service.read_all_by_time(time_from, time_to)
 
@@ -47,8 +47,8 @@ async def read_all_by_time(
 )
 @inject
 async def read(
-        id: PositiveInt,
-        service: Requests = Depends(Provide[Services.requests]),
+    id: PositiveInt,
+    service: Requests = Depends(Provide[Services.requests]),
 ) -> models.Request:
     return await service.read(id=id)
 
@@ -61,8 +61,8 @@ async def read(
 )
 @inject
 async def create(
-        cmd: models.CreateRequestCommand,
-        service: Requests = Depends(Provide[Services.requests]),
+    cmd: models.CreateRequestCommand,
+    service: Requests = Depends(Provide[Services.requests]),
 ) -> models.Request:
     return await service.create(cmd=cmd)
 
@@ -75,8 +75,8 @@ async def create(
 )
 @inject
 async def update(
-        cmd: models.UpdateRequestCommand,
-        service: Requests = Depends(Provide[Services.requests]),
+    cmd: models.UpdateRequestCommand,
+    service: Requests = Depends(Provide[Services.requests]),
 ) -> models.Request:
     return await service.update(cmd=cmd)
 
@@ -89,8 +89,8 @@ async def update(
 )
 @inject
 async def delete(
-        id: PositiveInt,
-        service: Requests = Depends(Provide[Services.requests]),
+    id: PositiveInt,
+    service: Requests = Depends(Provide[Services.requests]),
 ) -> models.Request:
     return await service.delete(id=id)
 
@@ -103,9 +103,9 @@ async def delete(
 )
 @inject
 async def add_comment(
-        id: PositiveInt,
-        cmd: models.Comment,
-        service: Requests = Depends(Provide[Services.requests]),
+    id: PositiveInt,
+    cmd: models.Comment,
+    service: Requests = Depends(Provide[Services.requests]),
 ) -> models.Comment:
     return await service.add_comment(id, cmd)
 
@@ -118,6 +118,6 @@ async def add_comment(
 )
 @inject
 async def get_all_tags(
-        service: Requests = Depends(Provide[Services.requests]),
+    service: Requests = Depends(Provide[Services.requests]),
 ) -> List[Tag]:
     return await service.get_all_tags()

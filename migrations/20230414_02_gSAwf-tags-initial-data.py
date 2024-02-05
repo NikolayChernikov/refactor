@@ -4,7 +4,7 @@ tags initial data
 
 from yoyo import step
 
-__depends__ = {'20230414_01_VZlyy-add-tags-table'}
+__depends__ = {"20230414_01_VZlyy-add-tags-table"}
 
 steps = [
     step(
@@ -32,6 +32,6 @@ steps = [
         """,
         """
             truncate tags cascade
-        """
+        """,
     ),
 ]

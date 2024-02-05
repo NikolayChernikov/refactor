@@ -1,7 +1,7 @@
 from typing import List
 
-from app.internal.repository.postgres.handlers.collect_response import collect_response
 from app.internal.repository.postgres.connection import get_connection
+from app.internal.repository.postgres.handlers.collect_response import collect_response
 from app.internal.repository.repository import Repository
 from app.pkg import models
 
@@ -41,8 +41,7 @@ class Requests(Repository):
             return await cur.fetchall()
 
     @collect_response
-    async def read_full_data(self, time_from,
-                             time_to) -> List[models.RequestFull]:
+    async def read_full_data(self, time_from, time_to) -> List[models.RequestFull]:
         q = f"""
                 select
                     requests.id, title, description, assets, status, created_timestamp, updated_timestamp,

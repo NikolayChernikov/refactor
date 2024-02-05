@@ -1,12 +1,12 @@
 import logging
+
 from app.pkg.settings import settings
 
 
 class Logger:
     def __init__(self):
         self._log_format = (
-            "%(asctime)s - %(levelname)s - %(name)s"
-            " - %(filename)s - %(funcName)s - %(lineno)d - %(message)s"
+            "%(asctime)s - %(levelname)s - %(name)s" " - %(filename)s - %(funcName)s - %(lineno)d - %(message)s"
         )
 
     def get_stream_handler(self):

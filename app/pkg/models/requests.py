@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import PositiveInt, validator, root_validator
+from pydantic import PositiveInt, root_validator, validator
 
 from app.pkg.models.base import BaseModel
 from app.pkg.settings import settings
@@ -47,9 +47,9 @@ class Types(str, Enum):
 
 
 class Priority(str, Enum):
-    LOW = 'low'
-    Medium = 'medium'
-    HIGH = 'high'
+    LOW = "low"
+    Medium = "medium"
+    HIGH = "high"
 
 
 class Comment(BaseModel):
@@ -101,10 +101,12 @@ class ReadRequest(BaseRequest):
 
     @validator("assets")
     def set_static_url_to_assets(cls, ass: List[str]) -> List[str]:
-        return list(map(
-            lambda a: a.replace(str(settings.STATIC_DIR_INTERNAL), str(settings.STATIC_URL)),
-            ass,
-        ))
+        return list(
+            map(
+                lambda a: a.replace(str(settings.STATIC_DIR_INTERNAL), str(settings.STATIC_URL)),
+                ass,
+            )
+        )
 
 
 class RequestQuery(BaseModel):
@@ -123,10 +125,12 @@ class UpdateRequestCommand(BaseRequest):
 
     @validator("assets")
     def set_internal_dir_to_assets(cls, ass: List[str]) -> List[str]:
-        return list(map(
-            lambda a: a.replace(str(settings.STATIC_URL), str(settings.STATIC_DIR_INTERNAL)),
-            ass,
-        ))
+        return list(
+            map(
+                lambda a: a.replace(str(settings.STATIC_URL), str(settings.STATIC_DIR_INTERNAL)),
+                ass,
+            )
+        )
 
 
 class DeleteRequestCommand(BaseModel):
@@ -177,7 +181,9 @@ class RequestFull(BaseModel):
 
     @validator("assets")
     def set_static_url_to_assets(cls, ass: List[str]) -> List[str]:
-        return list(map(
-            lambda a: a.replace(str(settings.STATIC_DIR_INTERNAL), str(settings.STATIC_URL)),
-            ass,
-        ))
+        return list(
+            map(
+                lambda a: a.replace(str(settings.STATIC_DIR_INTERNAL), str(settings.STATIC_URL)),
+                ass,
+            )
+        )

@@ -6,8 +6,8 @@ from argparse import ArgumentParser
 from dependency_injector.wiring import Provide, inject
 from yoyo import get_backend, read_migrations
 
-from app.pkg.connectors import Connectors, Postgres
 from app.configuration import __containers__
+from app.pkg.connectors import Connectors, Postgres
 
 
 def _apply(backend, migrations):

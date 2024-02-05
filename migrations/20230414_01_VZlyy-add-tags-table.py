@@ -4,7 +4,7 @@ add tags table
 
 from yoyo import step
 
-__depends__ = {'20230413_02_RtcJP-add-comments-table_upd'}
+__depends__ = {"20230413_02_RtcJP-add-comments-table_upd"}
 
 steps = [
     step(
@@ -16,6 +16,6 @@ steps = [
         """,
         """
             drop table if exists tags
-        """
+        """,
     )
 ]

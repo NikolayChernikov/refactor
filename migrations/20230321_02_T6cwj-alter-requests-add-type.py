@@ -4,7 +4,7 @@ Alter requests add type
 
 from yoyo import step
 
-__depends__ = {'20230321_01_ZywyW-alter-requests-add-creator-updator'}
+__depends__ = {"20230321_01_ZywyW-alter-requests-add-creator-updator"}
 
 steps = [
     step(
@@ -13,6 +13,6 @@ steps = [
         """,
         """
             alter table requests drop column if exists type;
-        """
+        """,
     )
 ]

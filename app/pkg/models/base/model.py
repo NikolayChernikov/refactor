@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, List, TypeVar
 
 import pydantic
@@ -12,9 +12,7 @@ Model = TypeVar("Model", bound="BaseModel")
 
 
 class BaseModel(pydantic.BaseModel):
-    def to_dict(
-        self, show_secrets: bool = False, values: Dict[Any, Any] = None, **kwargs
-    ) -> Dict[Any, Any]:
+    def to_dict(self, show_secrets: bool = False, values: Dict[Any, Any] = None, **kwargs) -> Dict[Any, Any]:
         """Make transfer model to Dict object."""
         values = self.dict(**kwargs).items() if not values else values.items()
         r = {}

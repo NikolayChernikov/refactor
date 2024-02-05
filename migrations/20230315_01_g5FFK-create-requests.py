@@ -21,6 +21,6 @@ steps = [
         """,
         """
             drop table if exists requests;
-        """
+        """,
     )
 ]

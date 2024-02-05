@@ -1,22 +1,29 @@
 import asyncio
-import re
 import logging
-from typing import List, Union
+import re
 from datetime import datetime
+from typing import List, Union
 
 import pydantic
 from pydantic import PositiveInt
 
-from app.pkg import models
-from app.pkg.models import UpdateRequestCommand, Message
-from app.pkg.models.centrifugo_server import CentrifugoServerPublish, CentrifugoServerMethod, CentrifugoServerParams
-from app.pkg.models.exceptions.requests import UnknownITRequestsError, BadBase64OfImage, TooManyImagesError, \
-    UnknownCommentsError
-from app.pkg.logger import Logger
-from app.pkg.models.exceptions.repository import EmptyResult
-from app.internal.pkg import clients
+from app.internal.pkg import clients, utils
 from app.internal.repository import postgres
-from app.internal.pkg import utils
+from app.pkg import models
+from app.pkg.logger import Logger
+from app.pkg.models import Message, UpdateRequestCommand
+from app.pkg.models.centrifugo_server import (
+    CentrifugoServerMethod,
+    CentrifugoServerParams,
+    CentrifugoServerPublish,
+)
+from app.pkg.models.exceptions.repository import EmptyResult
+from app.pkg.models.exceptions.requests import (
+    BadBase64OfImage,
+    TooManyImagesError,
+    UnknownCommentsError,
+    UnknownITRequestsError,
+)
 from app.pkg.settings import settings
 
 __all__ = [
@@ -35,15 +42,15 @@ class Requests:
     _centrifugo: clients.Centrifugo
 
     def __init__(
-            self,
-            logger: Logger,
-            filer: utils.Filer,
-            requests_repository: postgres.Requests,
-            comments_repository: postgres.Comments,
-            tags_repository: postgres.Tags,
-            vectors_repository: postgres.Vectors,
-            telegram: clients.Telegram,
-            centrifugo: clients.Centrifugo,
+        self,
+        logger: Logger,
+        filer: utils.Filer,
+        requests_repository: postgres.Requests,
+        comments_repository: postgres.Comments,
+        tags_repository: postgres.Tags,
+        vectors_repository: postgres.Vectors,
+        telegram: clients.Telegram,
+        centrifugo: clients.Centrifugo,
     ):
         self._logger = logger.get_logger(__name__)
         self._filer = filer
@@ -60,39 +67,43 @@ class Requests:
         )
 
     async def __publish_to_centrifugo(
-            self,
-            data: Message,
-            channel: str,
+        self,
+        data: Message,
+        channel: str,
     ):
-        await self._centrifugo.publish(CentrifugoServerPublish(
-            method=CentrifugoServerMethod.PUBLISH,
-            params=CentrifugoServerParams(
-                channel=channel,
-                data=data.to_dict(),
-            ),
-        ))
+        await self._centrifugo.publish(
+            CentrifugoServerPublish(
+                method=CentrifugoServerMethod.PUBLISH,
+                params=CentrifugoServerParams(
+                    channel=channel,
+                    data=data.to_dict(),
+                ),
+            )
+        )
 
     @staticmethod
     def __collect_caption(
-            request: Union[models.CreateRequestCommand, models.UpdateRequestCommand],
-            new_comment: bool = False,
+        request: Union[models.CreateRequestCommand, models.UpdateRequestCommand],
+        new_comment: bool = False,
     ) -> str:
         created = datetime.fromtimestamp(request.created_timestamp)
         updated = datetime.fromtimestamp(request.updated_timestamp)
-        message = (f"#{request.type.upper()}\n"
-                   f"Created \"{request.creator}\" \"{created}\"\n"
-                   f"Updated \"{request.updator}\" \"{updated}\"\n"
-                   f"Status \"{request.status.capitalize()}\"\n\n"
-                   f"{request.title}\n\n"
-                   f"{request.description}\n")
+        message = (
+            f"#{request.type.upper()}\n"
+            f'Created "{request.creator}" "{created}"\n'
+            f'Updated "{request.updator}" "{updated}"\n'
+            f'Status "{request.status.capitalize()}"\n\n'
+            f"{request.title}\n\n"
+            f"{request.description}\n"
+        )
         if new_comment:
             message += "Появился новый комментарий!"
         return message
 
     @staticmethod
     def __collect_caption_update(
-            request: Union[models.CreateRequestCommand, models.UpdateRequestCommand],
-            new_comment: bool = False,
+        request: Union[models.CreateRequestCommand, models.UpdateRequestCommand],
+        new_comment: bool = False,
     ) -> str:
         created = datetime.fromtimestamp(request.created_timestamp)
         updated = datetime.fromtimestamp(request.updated_timestamp)
@@ -130,16 +141,16 @@ class Requests:
             await self.__publish_to_centrifugo(
                 data=Message(
                     message=f"Новый запрос к IT {cmd.title} добавлен пользователем {cmd.creator} \n"
-                            f"ID запроса - {result.id}"),
-
-                channel=settings.CENT_IT_REQUEST_CHANNEL
+                    f"ID запроса - {result.id}"
+                ),
+                channel=settings.CENT_IT_REQUEST_CHANNEL,
             )
         except Exception:
             self._logger.exception("Error to add to cent")
 
     async def create(
-            self,
-            cmd: models.CreateRequestCommand,
+        self,
+        cmd: models.CreateRequestCommand,
     ) -> models.Request:
         assets = []
         try:
@@ -153,7 +164,7 @@ class Requests:
             cmd.updated_timestamp = cmd.created_timestamp
             cmd.status = models.Statuses.IN_QUEUE
             if not cmd.deadline:
-                cmd.deadline = ''
+                cmd.deadline = ""
             caption = self.__collect_caption(cmd)
             cmd.messages_ids = await self._telegram.send_notify(
                 assets=cmd.assets,
@@ -164,9 +175,11 @@ class Requests:
 
             result = await self._requests_repository.create(cmd=cmd)
 
-            tasks = [self.create_tags(cmd, result),
-                     self.create_vectors(cmd, result),
-                     self.create_request_cent_pub(cmd, result)]
+            tasks = [
+                self.create_tags(cmd, result),
+                self.create_vectors(cmd, result),
+                self.create_request_cent_pub(cmd, result),
+            ]
             await asyncio.gather(*tasks)
 
             return result
@@ -208,8 +221,7 @@ class Requests:
         await self._telegram.delete_messages(deleted.messages_ids)
         return deleted
 
-    async def read_all_by_time(self, time_from: int,
-                               time_to: int) -> List[models.RequestFull]:
+    async def read_all_by_time(self, time_from: int, time_to: int) -> List[models.RequestFull]:
         try:
             time_from_new = datetime.fromtimestamp(time_from)
             time_to_new = datetime.fromtimestamp(time_to)
@@ -314,11 +326,14 @@ class Requests:
             ]
             await asyncio.gather(*tasks)
 
-            asyncio.create_task(self.__publish_to_centrifugo(
-                data=Message(message=f"Обновлен запрос к IT {cmd.title} пользователем {cmd.updator} \n"
-                                     f"ID запроса - {cmd.id}"),
-                channel=settings.CENT_IT_REQUEST_CHANNEL
-            ))
+            asyncio.create_task(
+                self.__publish_to_centrifugo(
+                    data=Message(
+                        message=f"Обновлен запрос к IT {cmd.title} пользователем {cmd.updator} \n" f"ID запроса - {cmd.id}"
+                    ),
+                    channel=settings.CENT_IT_REQUEST_CHANNEL,
+                )
+            )
             return result
         except EmptyResult:
             self._filer.delete(files=new_assets)
@@ -353,8 +368,9 @@ class Requests:
                 await self.__publish_to_centrifugo(
                     data=Message(
                         message=f"Добавлен комментарий на запрос IT {request.title} пользователем {cmd.author} \n"
-                                f"ID запроса - {cmd.request_id}"),
-                    channel=settings.CENT_IT_REQUEST_CHANNEL
+                        f"ID запроса - {cmd.request_id}"
+                    ),
+                    channel=settings.CENT_IT_REQUEST_CHANNEL,
                 )
                 return comment
 

@@ -4,7 +4,7 @@ Alter requests add telegram ids
 
 from yoyo import step
 
-__depends__ = {'20230321_02_T6cwj-alter-requests-add-type'}
+__depends__ = {"20230321_02_T6cwj-alter-requests-add-type"}
 
 steps = [
     step(
@@ -13,6 +13,6 @@ steps = [
         """,
         """
             alter table requests drop column if exists messages_ids;
-        """
+        """,
     )
 ]

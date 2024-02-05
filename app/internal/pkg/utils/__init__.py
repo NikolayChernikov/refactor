@@ -1,7 +1,7 @@
 from dependency_injector import containers, providers
 
-from app.pkg.logger import LoggerContainer
 from app.internal.pkg.utils.filer import Filer
+from app.pkg.logger import LoggerContainer
 from app.pkg.settings import settings
 
 __all__ = [

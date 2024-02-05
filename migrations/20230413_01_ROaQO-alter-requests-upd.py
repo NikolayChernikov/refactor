@@ -4,7 +4,7 @@ alter requests add priority and comments
 
 from yoyo import step
 
-__depends__ = {'20230329_01_d8hyw-delete-all-bad-requests'}
+__depends__ = {"20230329_01_d8hyw-delete-all-bad-requests"}
 
 steps = [
     step(
@@ -18,7 +18,7 @@ steps = [
             alter table requests
                 drop column if exists priority,
                 drop column if exists comments
-        """
+        """,
     ),
     step(
         """
@@ -29,7 +29,7 @@ steps = [
         """
             alter table requests
                 drop column if exists tags
-        """
+        """,
     ),
     step(
         """
@@ -39,7 +39,7 @@ steps = [
         """
             alter table requests
                 drop column if exists is_all_vectors
-        """
+        """,
     ),
     step(
         """
@@ -50,6 +50,6 @@ steps = [
         """
             alter table requests
                 drop column if exists sites
-        """
+        """,
     ),
 ]

@@ -1,12 +1,11 @@
 from typing import List
 
-from app.internal.repository.postgres.handlers.collect_response import collect_response
 from app.internal.repository.postgres.connection import get_connection
+from app.internal.repository.postgres.handlers.collect_response import collect_response
 from app.internal.repository.repository import Repository
 from app.pkg import models
-from app.pkg.models import Tag, RequestTagBlock
+from app.pkg.models import RequestTagBlock, Tag
 from app.pkg.models.base import Model
-
 
 __all__ = [
     "Tags",
@@ -14,7 +13,6 @@ __all__ = [
 
 
 class Tags(Repository):
-
     def get_tmp(self, request_id: int, cmd: List[Tag]):
         res = []
         for i in cmd:

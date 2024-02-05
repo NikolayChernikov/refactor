@@ -36,11 +36,7 @@ class Postgres(BaseConnector):
     def get_dsn(self):
         """Description of ``BaseConnector.get_dsn``."""
         return (
-            f"postgresql://"
-            f"{self._username}:"
-            f"{self._password}@"
-            f"{self._host}:{self._port}/"
-            f"{self._database_name}"
+            f"postgresql://" f"{self._username}:" f"{self._password}@" f"{self._host}:{self._port}/" f"{self._database_name}"
         )
 
     @asynccontextmanager

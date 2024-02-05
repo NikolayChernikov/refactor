@@ -1,10 +1,10 @@
 from dependency_injector import containers, providers
 
-from app.pkg.logger import LoggerContainer
-from app.internal.repository import Repositories
 from app.internal.pkg.clients import Clients
 from app.internal.pkg.utils import Utils
+from app.internal.repository import Repositories
 from app.internal.services.requests import Requests
+from app.pkg.logger import LoggerContainer
 
 __all__ = [
     "Services",
@@ -29,5 +29,4 @@ class Services(containers.DeclarativeContainer):
         tags_repository=postgres.tags,
         vectors_repository=postgres.vectors,
         centrifugo=clients.centrifugo,
-
     )

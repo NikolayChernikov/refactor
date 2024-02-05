@@ -4,7 +4,7 @@ add request vectors table
 
 from yoyo import step
 
-__depends__ = {'20230414_02_gSAwf-tags-initial-data'}
+__depends__ = {"20230414_02_gSAwf-tags-initial-data"}
 
 steps = [
     step(
@@ -18,6 +18,6 @@ steps = [
         """,
         """
             drop table if exists vectors
-        """
+        """,
     )
 ]

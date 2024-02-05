@@ -4,7 +4,7 @@ Add column creator_role
 
 from yoyo import step
 
-__depends__ = {'20230601_01_jC0Qt-add-column-deadline'}
+__depends__ = {"20230601_01_jC0Qt-add-column-deadline"}
 
 steps = [
     step(
@@ -13,6 +13,6 @@ steps = [
         """,
         """
             alter table requests drop column if exists creator_role;
-        """
+        """,
     ),
 ]

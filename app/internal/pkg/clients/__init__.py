@@ -2,21 +2,15 @@ from dependency_injector import containers, providers
 
 from app.internal.pkg.clients.centrifugo.client import Centrifugo
 from app.internal.pkg.clients.element.client import ElementClient
+from app.internal.pkg.clients.telegram.client import Telegram
 from app.pkg.logger import LoggerContainer
 from app.pkg.settings import settings
-from app.internal.pkg.clients.telegram.client import Telegram
 
-__all__ = [
-    "Clients",
-    "Telegram",
-    "Centrifugo"
-]
+__all__ = ["Clients", "Telegram", "Centrifugo"]
 
 
 class Clients(containers.DeclarativeContainer):
-    configuration = providers.Configuration(
-        name="settings", pydantic_settings=[settings]
-    )
+    configuration = providers.Configuration(name="settings", pydantic_settings=[settings])
     logger = providers.Container(LoggerContainer)
 
     element_client = providers.Factory(

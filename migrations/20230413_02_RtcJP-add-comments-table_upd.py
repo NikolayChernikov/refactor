@@ -4,7 +4,7 @@ add comments table
 
 from yoyo import step
 
-__depends__ = {'20230413_01_ROaQO-alter-requests-upd'}
+__depends__ = {"20230413_01_ROaQO-alter-requests-upd"}
 
 steps = [
     step(
@@ -19,7 +19,7 @@ steps = [
         """,
         """
             drop table if exists comments
-        """
+        """,
     ),
     step(
         """
@@ -27,7 +27,6 @@ steps = [
         """,
         """
             alter table comments drop column if exists author_role text
-        """
+        """,
     ),
-
 ]

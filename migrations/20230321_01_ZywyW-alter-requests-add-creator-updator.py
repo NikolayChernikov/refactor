@@ -4,7 +4,7 @@ alter requests add creator, updator
 
 from yoyo import step
 
-__depends__ = {'20230315_01_g5FFK-create-requests'}
+__depends__ = {"20230315_01_g5FFK-create-requests"}
 
 steps = [
     step(
@@ -15,6 +15,6 @@ steps = [
         """
             alter table requests drop column if exists creator,
                                  drop column if exists updator;
-        """
+        """,
     )
 ]

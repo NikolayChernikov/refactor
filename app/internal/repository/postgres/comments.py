@@ -1,11 +1,10 @@
 from typing import List
 
-from app.internal.repository.postgres.handlers.collect_response import collect_response
 from app.internal.repository.postgres.connection import get_connection
+from app.internal.repository.postgres.handlers.collect_response import collect_response
 from app.internal.repository.repository import Repository
 from app.pkg import models
 from app.pkg.models.base import Model
-
 
 __all__ = [
     "Comments",
@@ -13,7 +12,6 @@ __all__ = [
 
 
 class Comments(Repository):
-
     @collect_response
     async def create(self, cmd: models.Comment) -> models.Comment:
         q = """
@@ -43,4 +41,3 @@ class Comments(Repository):
 
     async def delete(self, cmd: Model) -> Model:
         raise NotImplementedError
-
