@@ -135,7 +135,7 @@ class Requests:  # pylint: disable=too-many-instance-attributes
             if cmd.tags:
                 await self._tags_repository.create(result.id, cmd.tags)
                 result.tags = cmd.tags
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-raised
             self._logger.exception("Error to add tags in db")
 
     async def create_vectors(self, cmd: models.CreateRequestCommand, result: models.Request) -> None:
@@ -152,7 +152,7 @@ class Requests:  # pylint: disable=too-many-instance-attributes
             if not cmd.is_all_vectors:
                 vectors = await self._vectors_repository.create(result.id, cmd.vectors)
                 result.vectors = vectors
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-raised
             self._logger.exception("Error to add vectors in db")
 
     async def create_request_cent_pub(self, cmd: models.CreateRequestCommand, result: models.Request) -> None:
@@ -172,7 +172,7 @@ class Requests:  # pylint: disable=too-many-instance-attributes
                 ),
                 channel=settings.CENT_IT_REQUEST_CHANNEL,
             )
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-raised
             self._logger.exception("Error to add to cent")
 
     async def create(  # noqa: C901
@@ -200,12 +200,14 @@ class Requests:  # pylint: disable=too-many-instance-attributes
             if not cmd.deadline:
                 cmd.deadline = ""
             caption = self.__collect_caption(cmd)
-            cmd.messages_ids = await self._telegram.send_notify(
-                assets=cmd.assets,
-                caption=caption,
-            )
-            if not cmd.messages_ids:
-                raise Exception  # pylint: disable=broad-exception-raised
+
+            try:
+                cmd.messages_ids = await self._telegram.send_notify(
+                    assets=cmd.assets,
+                    caption=caption,
+                )
+            except Exception as exc:
+                self._logger.exception(exc)
 
             result = await self._requests_repository.create(cmd=cmd)
 
@@ -221,9 +223,10 @@ class Requests:  # pylint: disable=too-many-instance-attributes
             self._filer.delete(files=assets)
             self._logger.exception("Bad base64 of image")
             raise BadBase64OfImage
-        except ValueError:
+        except ValueError as exc:
+            self._logger.exception(exc)
             raise TooManyImagesError
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-raised
             self._filer.delete(files=assets)
             self._logger.exception("Unknown error when create request to IT")
             raise UnknownITRequestsError
@@ -238,7 +241,7 @@ class Requests:  # pylint: disable=too-many-instance-attributes
         """
         try:  # pylint: disable=no-else-raise
             request = await self.__read_by_id(id=id)
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-raised
             self._logger.exception("Ошибка выгрузки запроса из БД")
             raise UnknownITRequestsError
         else:
@@ -246,13 +249,13 @@ class Requests:  # pylint: disable=too-many-instance-attributes
                 try:
                     vectors = await self._vectors_repository.read(request.id)
                     request.vectors = vectors
-                except Exception:
+                except Exception:  # pylint: disable=broad-exception-raised
                     self._logger.exception("Ошибка выгрузки векторов запроса")
             if request.comments:
                 try:
                     comments = await self._comments_repository.read(request.id)
                     request.comments_objects = comments
-                except Exception:
+                except Exception:  # pylint: disable=broad-exception-raised
                     self._logger.exception("Ошибка выгрузки комментариев")
             return request
 
@@ -266,7 +269,10 @@ class Requests:  # pylint: disable=too-many-instance-attributes
         """
         deleted = await self._requests_repository.delete(cmd=models.DeleteRequestCommand(id=id))
         self._filer.delete(files=deleted.assets)
-        await self._telegram.delete_messages(deleted.messages_ids)
+        try:
+            await self._telegram.delete_messages(deleted.messages_ids)
+        except Exception as exc:
+            self._logger.exception(exc)
         return deleted
 
     async def read_all_by_time(self, time_from: int, time_to: int) -> List[models.RequestFull]:
@@ -306,12 +312,12 @@ class Requests:  # pylint: disable=too-many-instance-attributes
                     try:
                         tags = await self._tags_repository.read(el.id)
                         el.tags = tags
-                    except Exception:
+                    except Exception:  # pylint: disable=broad-exception-raised
                         self._logger.exception("Ошибка выгрузки тэгов")
                 if el.comments:
                     try:
                         comments = await self._comments_repository.read(el.id)
-                    except Exception:
+                    except Exception:  # pylint: disable=broad-exception-raised
                         self._logger.exception("Ошибка выгрузки комментариев")
                     else:
                         el.comments_objects = comments
@@ -328,7 +334,7 @@ class Requests:  # pylint: disable=too-many-instance-attributes
         """
         try:
             comments = await self._comments_repository.read(cmd.id)
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-raised
             self._logger.exception("Ошибка выгрузки комментариев")
         else:
             result.comments_objects = comments
@@ -392,18 +398,22 @@ class Requests:  # pylint: disable=too-many-instance-attributes
             cmd.assets = old_assets + new_assets
             previous = await self.__read_by_id(id=cmd.id)
             self._filer.delete(files=[item for item in previous.assets if item not in cmd.assets])
-            await self._telegram.delete_messages(messages_ids=previous.messages_ids)
+            try:
+                await self._telegram.delete_messages(messages_ids=previous.messages_ids)
+            except Exception as exc:
+                self._logger.exception(exc)
             cmd.created_timestamp = previous.created_timestamp
             cmd.updated_timestamp = int(datetime.now().timestamp())
             cmd.creator = previous.creator
             caption = self.__collect_caption_update(request=cmd)
-            cmd.messages_ids = await self._telegram.send_notify(
-                assets=[],
-                caption=caption,
-                disable_notification=True,
-            )
-            if not cmd.messages_ids:
-                raise Exception  # pylint: disable=broad-exception-raised
+            try:
+                cmd.messages_ids = await self._telegram.send_notify(
+                    assets=[],
+                    caption=caption,
+                    disable_notification=True,
+                )
+            except Exception as exc:
+                self._logger.exception(exc)
             if not cmd.vectors:
                 cmd.is_all_vectors = True
             if not cmd.tags:
@@ -432,12 +442,12 @@ class Requests:  # pylint: disable=too-many-instance-attributes
             raise EmptyResult
         except ValueError:
             raise TooManyImagesError
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-raised
             self._filer.delete(files=new_assets)
             self._logger.exception("Unknown error when update request to IT")
             raise UnknownITRequestsError
 
-    async def add_comment(self, request_id: int, cmd: models.Comment) -> models.Comment:
+    async def add_comment(self, request_id: int, cmd: models.Comment) -> models.Comment:  # noqa: C901
         """Add comment.
 
         Args:
@@ -449,7 +459,7 @@ class Requests:  # pylint: disable=too-many-instance-attributes
         try:  # pylint: disable=no-else-raise
             cmd.request_id = request_id
             comment = await self._comments_repository.create(cmd)
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-raised
             self._logger.exception("Ошибка создания коммента в БД")
             raise UnknownCommentsError
         else:
@@ -457,11 +467,14 @@ class Requests:  # pylint: disable=too-many-instance-attributes
                 request = await self._requests_repository.update_comment(cmd)
                 data = pydantic.parse_obj_as(UpdateRequestCommand, request)
                 caption = self.__collect_caption_update(data, new_comment=True)
-                await self._telegram.send_notify(
-                    assets=[],
-                    caption=caption,
-                )
-            except Exception:
+                try:
+                    await self._telegram.send_notify(
+                        assets=[],
+                        caption=caption,
+                    )
+                except Exception as exc:
+                    self._logger.exception(exc)
+            except Exception:  # pylint: disable=broad-exception-raised
                 self._logger.exception("Ошибка замены времени обновления")
                 raise UnknownCommentsError
             else:
@@ -481,6 +494,6 @@ class Requests:  # pylint: disable=too-many-instance-attributes
         """
         try:
             return await self._tags_repository.read_all()
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-raised
             self._logger.exception("Ошибка выгрузки тэгов из БД")
             raise UnknownITRequestsError

@@ -112,8 +112,7 @@ class Requests(Repository):
         """Insert data to DB.
 
         Args:
-            time_from: time from.
-            time_to: time to.
+            cmd: create request command.
 
         Returns: list with requests.
         """

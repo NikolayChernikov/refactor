@@ -43,7 +43,7 @@ class BaseClient:
         async with httpx.AsyncClient(headers=headers, timeout=10) as client:
             try:
                 response = await client.request(method=method, url=f"{self.url}/{path}", **kwargs)
-            except Exception:
+            except Exception:  # pylint:  disable=broad-exception-raised
                 self._logger.exception("Error while sending request")
                 raise ClientException(
                     message=f"{self.client_name} is not available now",

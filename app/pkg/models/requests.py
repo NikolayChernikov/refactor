@@ -111,7 +111,7 @@ class Request(BaseRequest):
     id: PositiveInt
     creator: str
     creator_role: Optional[str]
-    messages_ids: List[int]
+    messages_ids: List[int] = None
 
 
 class ReadRequest(BaseRequest):
@@ -140,7 +140,7 @@ class RequestQuery(BaseModel):
 class CreateRequestCommand(BaseRequest):
     """Create request command model."""
 
-    messages_ids: Optional[List[int]]
+    messages_ids: Optional[List[int]] = None
 
 
 class UpdateRequestCommand(BaseRequest):
@@ -149,7 +149,7 @@ class UpdateRequestCommand(BaseRequest):
     id: PositiveInt
     creator: Optional[str]
     creator_role: Optional[str]
-    messages_ids: Optional[List[int]]
+    messages_ids: Optional[List[int]] = None
 
     @validator("assets")
     def set_internal_dir_to_assets(cls, ass: List[str]) -> List[str]:  # pylint: disable=no-self-argument

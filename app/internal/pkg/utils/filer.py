@@ -57,7 +57,7 @@ class Filer:
             async with aiofiles.open(path, "wb") as f:
                 await f.write(base64.urlsafe_b64decode(bytes(base64_, encoding="latin-1")))
             return path
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-raised
             raise BadBase64OfImage
 
     @staticmethod

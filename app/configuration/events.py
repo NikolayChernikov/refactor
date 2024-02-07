@@ -14,4 +14,7 @@ async def on_startup(
 
     Returns: None
     """
-    asyncio.create_task(telegram.start())
+    try:
+        asyncio.create_task(telegram.start())
+    except Exception:  # pylint: disable=broad-exception-raised
+        pass

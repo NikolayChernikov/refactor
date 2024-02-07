@@ -53,7 +53,7 @@ class Telegram:
             status_code = await self.element_client.send_message(model)
             if str(status_code) == "200":
                 self._logger.info("Success - send alert to matrix")
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-raised
             self._logger.exception("Error to send to element data")
 
     async def send_notify(self, assets: List[str], caption: str, disable_notification: bool = False) -> List[int]:
@@ -120,7 +120,7 @@ class Telegram:
                 for id_ in messages_ids
             ]
             await asyncio.gather(*tasks)
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-raised
             pass
 
     async def start(self) -> None:

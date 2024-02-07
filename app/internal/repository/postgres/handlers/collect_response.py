@@ -94,7 +94,7 @@ async def __convert_memory_viewer(r: Union[RealDictRow, Dict]):  # noqa: C901
         elif key == "time":
             try:
                 new_time = datetime.strptime(str(value), "%Y-%m-%dT%H:%M:%S.%f")
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-raised
                 new_time = datetime.strptime(str(value), "%Y-%m-%d% H:%M:%S.%f")
             new_time_to_int = int(new_time.strftime("%s"))
             r[key] = new_time_to_int
